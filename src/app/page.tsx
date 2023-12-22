@@ -9,7 +9,7 @@ import styles from "./page.module.css";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function Home() {
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(true);
   const [selectedLeilao, setSelectedLeilao] = useState(null);
   const [user, setUser] = useState({ name: "", cpf: "" });
 
@@ -37,6 +37,7 @@ export default function Home() {
             <h2>
               Bem vindo <span>{user.name}</span>
             </h2>
+            <button onClick={() => setIsLoginModalOpen(true)}>Sair</button>
           </header>
           <main>
             <div>

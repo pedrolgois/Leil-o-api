@@ -35,6 +35,21 @@
   font-weight: 600;
 }
 
+.leilao > div header button{
+  padding: 0.5rem;
+  border-radius: 0.3rem;
+  border: 0;
+  background-color: transparent;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.leilao > div header button:hover{
+  text-decoration: underline;
+}
+
 .leilao > div header h2{
   font-size: 1.5rem;
   font-weight: 600;
