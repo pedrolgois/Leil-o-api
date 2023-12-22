@@ -9,7 +9,7 @@ import styles from "./page.module.css";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function Home() {
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(true);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [selectedLeilao, setSelectedLeilao] = useState(null);
   const [user, setUser] = useState({ name: "", cpf: "" });
 
@@ -37,13 +37,7 @@ export default function Home() {
             <h2>
               Bem vindo <span>{user.name}</span>
             </h2>
-            <button
-              onClick={() => {
-                window.location.reload();
-              }}
-            >
-              Sair
-            </button>
+            <button onClick={() => setIsLoginModalOpen(true)}>Sair</button>
           </header>
           <main>
             <div>
@@ -58,7 +52,6 @@ export default function Home() {
       <LoginModal
         modalOpen={isLoginModalOpen}
         setModalOpen={setIsLoginModalOpen}
-        setUserMain={setUser}
       />
       <LeilaoModal
         refresh={getLeiloes}
@@ -164,10 +157,7 @@ function LeilaoModal({
             </small>
             <br />
             <small>
-              Status:{" "}
-              {vencido || selectedLeilao?.item.status == "Vendido"
-                ? "Vendido"
-                : "A venda"}
+              Status: {vencido ? "Vendido" : selectedLeilao?.item.status || ""}
             </small>
           </div>
         </div>
@@ -374,11 +364,9 @@ function ItemForm({ refresh }: { refresh: Function }) {
 function LoginModal({
   modalOpen,
   setModalOpen,
-  setUserMain,
 }: {
   modalOpen: boolean;
   setModalOpen: Function;
-  setUserMain: Function;
 }) {
   const defaultUser = {
     name: "",
@@ -395,7 +383,6 @@ function LoginModal({
     e.preventDefault();
     localStorage.setItem("user", JSON.stringify(user));
     setModalOpen(false);
-    setUserMain(user);
     setUser(defaultUser);
   }
   return (
