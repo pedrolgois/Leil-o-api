@@ -1,4 +1,4 @@
-import { Item, getItens, postItem } from "../../../../src/lib/data"
+import { Item, getItens, postItem } from "@/src/components/lib/data"
 import { NextResponse } from "next/server"
 
 export const GET = async (req: Request, res: Response) => {
