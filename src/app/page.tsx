@@ -78,7 +78,13 @@ function LeilaoModal({
   setSelectedLeilao: Function;
 }) {
   const [lance, setLance] = useState("0");
+  const [user, setUser] = useState({ name: "", cpf: "" });
 
+  useEffect(() => {
+    setUser(
+      JSON.parse(window.localStorage.getItem("user") || "{name: '', cpf: ''}")
+    );
+  }, []);
   const maiorLance = selectedLeilao?.lances.reduce(
     (prev, current) => {
       return prev.value > current.value ? prev : current;
@@ -88,7 +94,7 @@ function LeilaoModal({
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const participant = JSON.parse(window.localStorage.getItem("user") || "{}");
+    const participant = user;
     const novolance = {
       value: lance,
       participant,
@@ -176,6 +182,7 @@ function ItemList({
   leiloes: Leilao[];
   setLeilao: Function;
 }) {
+
   return (
     <div>
       <h2>Itens</h2>
