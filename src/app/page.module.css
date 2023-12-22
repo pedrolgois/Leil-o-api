@@ -35,6 +35,22 @@
   font-weight: 600;
 }
 
+.leilao > div header h2{
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.leilao > div header h2 span{
+  text-decoration: underline;
+}
+
+.leilao main{
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-around;
+}
+
 /* Formzinho basico */
 
 form.form{
@@ -77,7 +93,7 @@ form.form button:hover{
 
  /* Login modal */
 
-.loginModal{
+.loginModal, .leilaoModal{
   position: fixed;
   top: 0;
   left: 0;
@@ -89,19 +105,20 @@ form.form button:hover{
   transition: .3s;
 }
 
-.loginModal.closed{
+.loginModal.closed, .leilaoModal.closed{
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
 }
 
-.loginModal > div {
+.loginModal > div, .leilaoModal > div {
   background-color: white;
   padding: 2rem;
   border-radius: 0.3rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  position: relative;
 }
 
 .loginModal > div form {
@@ -137,4 +154,93 @@ form.form button:hover{
 
 .loginModal > div form button:hover{
   background-color: #420000;
+}
+
+.item{
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem ;
+  cursor: pointer;
+  transition: .3s;
+  border-radius: 5px;
+}
+
+.item:hover{
+  background-color: #eee;
+}
+
+.item:not(:last-child){
+  border-bottom: 1px solid #ccc;
+}
+
+.item img{
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+}
+
+/* leilao modal */
+
+.leilaoModal > div {
+  width: 800px;
+}
+
+.leilaoModal > div .close{
+  all: unset;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.leilaoModal > div h2{
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.leilaoModal > div .info{
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+
+}
+
+.leilaoModal > div .info img{
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+}
+
+.leilaoModal > div .lances form small{
+  text-align: center;
+  width: 100%;
+  display: block;
+}
+
+.leilaoModal > div .lances form div{
+  display: flex;
+  justify-content: center;
+  padding: .3rem 0;
+}
+
+.leilaoModal > div .lances form div input{
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.3rem;
+  width: 250px;
+}
+
+.leilaoModal > div .lances form div button{
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.3rem;
+  background-color: #830000;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .3s;
 }

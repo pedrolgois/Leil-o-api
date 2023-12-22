@@ -15,6 +15,7 @@ export const POST = async (req: Request, res: Response) => {
   const {itemId, horarioLimite} = await req.json();
   try{
     const item = await getItem(itemId);
+
     if(!item){
       return NextResponse.json({ message: 'Item not found' }, { status: 404 })
     }
@@ -26,6 +27,7 @@ export const POST = async (req: Request, res: Response) => {
       date: new Date(),
       horarioLimite,
     }
+
     postLeilao(leilao);
     return NextResponse.json({message: 'Ok' , leilao })
   } catch (error) {

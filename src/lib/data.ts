@@ -30,15 +30,58 @@ export type Leilao = {
 let itens = [
   {
     id: Date.now().toString(),
+    name: 'Carro',
+    description: 'Fiat uno quatro portas',
+    minimumValue: 65000,
+    status: 'Vendido',
+    date: new Date()
+  },
+  {
+    id: Date.now().toString(),
     name: 'Quadro',
     description: 'Quadro antigo de monaliza',
-    minimumValue: 100000,
+    minimumValue: 120000,
     status: 'A venda',
     date: new Date()
   }
 ]
 
-let leiloes: Leilao[] = []
+let leiloes: Leilao[] = [
+  {
+    id: Date.now().toString(),
+    date: new Date(),
+    item: itens[0],
+    lances: [
+      {
+        id: Date.now().toString(),
+        value: 65000,
+        date: new Date(),
+        participant: {
+          name: 'João',
+          cpf: '123.456.789-00'
+        }
+      }
+    ],
+    horarioLimite: new Date('2023-12-22T07:25')
+  },
+  {
+    id: (Date.now()+ 1).toString(),
+    date: new Date(),
+    item: itens[1],
+    lances: [
+      {
+        id: Date.now().toString(),
+        value: 120000,
+        date: new Date(),
+        participant: {
+          name: 'Maria',
+          cpf: '123.456.789-00'
+        }
+      }
+    ],
+    horarioLimite: new Date('2023-12-22T07:25')
+  }
+]
 
 // Handler Itens
 export const getItens = () => itens;
@@ -67,4 +110,26 @@ export const deleteLance = (leilaoId: string, lanceId: string) => {
   if (leilao) {
     leilao.lances = leilao.lances.filter(lance => lance.id !== lanceId);
   }
+}
+
+// Utils
+export function formatMoney(number: number) {
+  return Number(number).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+}
+
+
+export function formatarDataParaExibicao(data: Date) {
+  const dia = data.getDate();
+  const mes = data.getMonth() + 1; // Meses começam do zero
+  const ano = data.getFullYear();
+  const horas = data.getHours();
+  const minutos = data.getMinutes();
+
+  // Pad com zero à esquerda se for necessário
+  const diaFormatado = dia < 10 ? `0${dia}` : dia;
+  const mesFormatado = mes < 10 ? `0${mes}` : mes;
+  const horasFormatadas = horas < 10 ? `0${horas}` : horas;
+  const minutosFormatados = minutos < 10 ? `0${minutos}` : minutos;
+
+  return `${diaFormatado}/${mesFormatado}/${ano} ${horasFormatadas}:${minutosFormatados}`;
 }

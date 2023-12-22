@@ -26,6 +26,6 @@ export const POST = async (req: Request, res: Response) => {
     postItem(item);
     return NextResponse.json({message: 'Ok' , item })
   } catch (error) {
-    return NextResponse.json({ message: 'Error geting the itens', error }, { status: 500 })
+    return NextResponse.json({ message: 'Error posting the itens', error }, { status: 500 })
   }
 }
