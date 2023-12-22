@@ -1,95 +1,152 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+
+import { ChangeEvent, FormEvent, useState } from "react";
+import styles from "./page.module.css";
 
 export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isLeilaoModalOpen, setIsLeilaoModalOpen] = useState(false);
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
+  const user = JSON.parse(window.localStorage.getItem("user") || "{name: ''}}");
+  return (
+    <div className={styles.leilao}>
+      <div>
+        <header>
+          <h1>Leilão</h1>
+          <h2>Bem vindo {user.name}</h2>
+        </header>
+        <main>
+          <div>
+            <ItemForm />
+          </div>
+          <div></div>
+        </main>
+      </div>
+      <LoginModal
+        modalOpen={isLoginModalOpen}
+        setModalOpen={setIsLoginModalOpen}
+      />
+    </div>
+  );
+}
+
+function ItemForm() {
+  const defaultItem = {
+    name: "",
+    description: "",
+    minimumValue: 0,
+  };
+  const [item, setItem] = useState(defaultItem);
+
+  const handleItem = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setItem({ ...item, [name]: value });
+  };
+
+  const handleSubmitItem = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      fetch("/api/item", {
+        method: "POST",
+        body: JSON.stringify(item),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmitItem} className={styles.form}>
+      <h2>Cadastrar Item</h2>
+      <div>
+        <label htmlFor="name">Nome</label>
+        <input
+          type="text"
+          name="name"
+          value={item.name}
+          required
+          onChange={handleItem}
         />
       </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+      <div>
+        <label htmlFor="description">Descrição</label>
+        <input
+          type="text"
+          name="description"
+          value={item.description}
+          required
+          onChange={handleItem}
+        />
       </div>
-    </main>
-  )
+      <div>
+        <label htmlFor="minimumValue">Valor mínimo</label>
+        <input
+          type="number"
+          name="minimumValue"
+          value={item.minimumValue}
+          required
+          onChange={handleItem}
+        />
+      </div>
+      <button type="submit">Salvar</button>
+    </form>
+  );
+}
+
+// Modal de Login para o leilão
+
+function LoginModal({
+  modalOpen,
+  setModalOpen,
+}: {
+  modalOpen: boolean;
+  setModalOpen: Function;
+}) {
+  const defaultUser = {
+    name: "",
+    cpf: "",
+  };
+  const [user, setUser] = useState(defaultUser);
+
+  function handleUser(e: ChangeEvent<HTMLInputElement>) {
+    const { name, value } = e.target;
+    setUser({ ...user, [name]: value });
+  }
+
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    window.localStorage.setItem("user", JSON.stringify(user));
+    setModalOpen(false);
+    setUser(defaultUser);
+  }
+  return (
+    <div className={[styles.loginModal, !modalOpen && styles.closed].join(" ")}>
+      <div>
+        <h2>Login</h2>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            name="name"
+            placeholder="Nome completo"
+            value={user.name}
+            onChange={handleUser}
+            required
+          />
+          <input
+            type="text"
+            name="cpf"
+            placeholder="CPF"
+            value={user.cpf}
+            onChange={handleUser}
+            required
+          />
+          <button type="submit">Entrar</button>
+        </form>
+      </div>
+    </div>
+  );
 }
