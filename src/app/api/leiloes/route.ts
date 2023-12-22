@@ -20,6 +20,10 @@ export const POST = async (req: Request, res: Response) => {
       return NextResponse.json({ message: 'Item not found' }, { status: 404 })
     }
 
+    if(Date.now() > new Date(horarioLimite).getTime()){
+      return NextResponse.json({ message: 'Data invalida' }, { status: 400 })
+    }
+
     const leilao: Leilao = {
       id: Date.now().toString(),
       item,

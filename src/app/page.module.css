@@ -259,3 +259,31 @@ form.form button:hover{
   cursor: pointer;
   transition: .3s;
 }
+
+.lances .lista{
+  padding-top: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+}
+
+.lance{
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.lance.winner{
+  background-color: #005c23!important;
+}
+
+.lance.possibleWinner{
+  background-color: #3100a34d;
+}
+
+.userLance::after{
+  background-color: pink;
+  content: '';
+  display: block;
+  height: 3px;
+  width: 100%;
+}

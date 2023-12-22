@@ -29,7 +29,7 @@ export type Leilao = {
 
 let itens = [
   {
-    id: Date.now().toString(),
+    id: 'item1',
     name: 'Carro',
     description: 'Fiat uno quatro portas',
     minimumValue: 65000,
@@ -37,7 +37,7 @@ let itens = [
     date: new Date()
   },
   {
-    id: Date.now().toString(),
+    id: 'item2',
     name: 'Quadro',
     description: 'Quadro antigo de monaliza',
     minimumValue: 120000,
@@ -48,12 +48,12 @@ let itens = [
 
 let leiloes: Leilao[] = [
   {
-    id: Date.now().toString(),
+    id: 'leilao1',
     date: new Date(),
     item: itens[0],
     lances: [
       {
-        id: Date.now().toString(),
+        id: 'leilao1lance1',
         value: 65000,
         date: new Date(),
         participant: {
@@ -62,15 +62,15 @@ let leiloes: Leilao[] = [
         }
       }
     ],
-    horarioLimite: new Date('2023-12-22T07:25')
+    horarioLimite: new Date('2023-12-22T20:25')
   },
   {
-    id: (Date.now()+ 1).toString(),
+    id: 'leilao2',
     date: new Date(),
     item: itens[1],
     lances: [
       {
-        id: Date.now().toString(),
+        id: 'leilao2lance1',
         value: 120000,
         date: new Date(),
         participant: {
@@ -79,7 +79,7 @@ let leiloes: Leilao[] = [
         }
       }
     ],
-    horarioLimite: new Date('2023-12-22T07:25')
+    horarioLimite: new Date('2023-12-22T10:25')
   }
 ]
 

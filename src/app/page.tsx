@@ -9,7 +9,7 @@ import styles from "./page.module.css";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function Home() {
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(true);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [selectedLeilao, setSelectedLeilao] = useState(null);
   const [user, setUser] = useState({ name: "", cpf: "" });
 
@@ -54,6 +54,7 @@ export default function Home() {
         setModalOpen={setIsLoginModalOpen}
       />
       <LeilaoModal
+        refresh={getLeiloes}
         selectedLeilao={selectedLeilao}
         setSelectedLeilao={setSelectedLeilao}
       />
@@ -76,9 +77,11 @@ export default function Home() {
 function LeilaoModal({
   selectedLeilao,
   setSelectedLeilao,
+  refresh,
 }: {
   selectedLeilao: Leilao | null;
   setSelectedLeilao: Function;
+  refresh: Function;
 }) {
   const [lance, setLance] = useState("0");
   const [user, setUser] = useState({ name: "", cpf: "" });
@@ -108,13 +111,25 @@ function LeilaoModal({
         "Content-Type": "application/json",
       },
       body: JSON.stringify(novolance),
-    })
-      .then((res) => res.json())
-      .then((data) => {
+    }).then(async (res) => {
+      const data = await res.json();
+      if (res.status == 200) {
         toast.success("Lance cadastrado com sucesso");
         setSelectedLeilao(data.leilao);
-      });
+        refresh();
+      } else {
+        toast.error(data.message);
+      }
+    });
   }
+
+  const orderedLances = selectedLeilao?.lances.sort((a, b) => {
+    return a.value > b.value ? -1 : 1;
+  });
+
+  const vencido =
+    selectedLeilao &&
+    Date.now() > new Date(selectedLeilao.horarioLimite).getTime();
   return (
     <div
       className={[styles.leilaoModal, !selectedLeilao && styles.closed].join(
@@ -141,36 +156,54 @@ function LeilaoModal({
               )}
             </small>
             <br />
-            <small>Status: {selectedLeilao?.item.status || ""}</small>
+            <small>
+              Status: {vencido ? "Vendido" : selectedLeilao?.item.status || ""}
+            </small>
           </div>
         </div>
         <h2>Lances</h2>
 
         <div className={styles.lances}>
-          <form onSubmit={handleSubmit}>
-            <div>
-              <input type="number" onChange={(e) => setLance(e.target.value)} />
-              <button type="submit">Dar Lance</button>
-            </div>
-            <small>
-              Lance Mínimo: R$
-              {formatMoney(selectedLeilao?.item.minimumValue || 0)}
-            </small>
-            <small>
-              Maior lance: R$ {formatMoney(maiorLance?.value || 0)} (
-              {maiorLance?.participant.name})
-            </small>
-          </form>
-          {selectedLeilao?.lances.map((lance) => (
-            <div key={lance.id} className={styles.lance}>
+          {selectedLeilao?.item.status === "A venda" && !vencido && (
+            <form onSubmit={handleSubmit}>
               <div>
-                <h3>{lance.participant.name}</h3>
+                <input
+                  type="number"
+                  onChange={(e) => setLance(e.target.value)}
+                />
+                <button type="submit">Dar Lance</button>
               </div>
-              <p>R$ {formatMoney(lance.value)}</p>
-            </div>
-          ))}
+              <small>
+                Lance Mínimo: R$
+                {formatMoney(selectedLeilao?.item.minimumValue || 0)}
+              </small>
+              <small>
+                Maior lance: R$ {formatMoney(maiorLance?.value || 0)} (
+                {maiorLance?.participant.name})
+              </small>
+            </form>
+          )}
+
+          <div className={styles.lista}>
+            {orderedLances?.map((lance, index) => (
+              <div
+                key={lance.id}
+                className={[
+                  styles.lance,
+                  index == 0 && styles.possibleWinner,
+                  (index == 0 && vencido) ||
+                    (selectedLeilao?.item.status == "Vendido" && styles.winner),
+                  user.cpf == lance.participant.cpf && styles.userLance,
+                ].join(" ")}
+              >
+                <div>
+                  <h3>{lance.participant.name}</h3>
+                </div>
+                <p>R$ {formatMoney(lance.value)}</p>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className={styles.lances}></div>
       </div>
     </div>
   );
@@ -188,27 +221,32 @@ function ItemList({
   return (
     <div>
       <h2>Itens</h2>
-      {leiloes.map((leilao) => (
-        <div
-          key={leilao.id}
-          onClick={() => setLeilao(leilao)}
-          className={styles.item}
-        >
-          <img
-            src={"https://cdn-icons-png.flaticon.com/512/234/234707.png"}
-            alt={leilao.item.name}
-          />
-          <div>
-            <h3>{leilao.item.name}</h3>
-            <p>{leilao.item.description}</p>
-            <small>
-              Limite: {formatarDataParaExibicao(new Date(leilao.horarioLimite))}
-            </small>
-            <br />
-            <small>Status: {leilao.item.status}</small>
+      {leiloes.map((leilao) => {
+        const vencido = Date.now() > new Date(leilao.horarioLimite).getTime();
+
+        return (
+          <div
+            key={leilao.id}
+            onClick={() => setLeilao(leilao)}
+            className={styles.item}
+          >
+            <img
+              src={"https://cdn-icons-png.flaticon.com/512/234/234707.png"}
+              alt={leilao.item.name}
+            />
+            <div>
+              <h3>{leilao.item.name}</h3>
+              <p>{leilao.item.description}</p>
+              <small>
+                Limite:{" "}
+                {formatarDataParaExibicao(new Date(leilao.horarioLimite))}
+              </small>
+              <br />
+              <small>Status: {vencido ? "Vendido" : leilao.item.status}</small>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -239,11 +277,13 @@ function ItemForm({ refresh }: { refresh: Function }) {
           "Content-Type": "application/json",
         },
       })
-        .then((res) => res.json())
-        .then(async (data) => {
+        .then(async (res) => {
+          const data = await res.json();
+          if (res.status != 200) {
+            throw new Error(data.message);
+          }
           const newItem = data.item;
           const horarioLimite = new Date(item.horarioLimite);
-          console.log(horarioLimite, item);
           const leilaoBody = {
             itemId: newItem.id,
             horarioLimite,
@@ -254,14 +294,18 @@ function ItemForm({ refresh }: { refresh: Function }) {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(leilaoBody),
-          })
-            .then((res) => res.json())
-            .then((data) => {
+          }).then(async (res) => {
+            const data = await res.json();
+            if (res.status == 200) {
               toast.success("Item cadastrado com sucesso");
-            });
+            } else {
+              toast.error(data.message);
+            }
+          });
           refresh();
           setItem(defaultItem);
-        });
+        })
+        .catch((err) => toast.error(err.message));
     } catch (err) {
       toast.error("Erro ao cadastrar item");
     }

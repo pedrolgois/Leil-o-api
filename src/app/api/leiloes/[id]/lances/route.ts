@@ -6,20 +6,24 @@ export const POST = async (req: Request, res: Response) => {
   const id = req.url.split("/leiloes/")[1].split("/lances")[0];
 
   try{
+
     const leilao = await getLeilao(id);
 
     // Verifica se o leilão existe
     if(!leilao){
       return NextResponse.json({ message: 'Leilão not found' }, { status: 404 })
     }
+
     // Verifica se o leião está aberto
     if(Date.now() > new Date(leilao.horarioLimite).getTime()){
       return NextResponse.json({ message: 'Leilão encerrado' }, { status: 400 })
     }
+
     // Verifica se o lance é maior que o valor mínimo
     if(value <= leilao.item.minimumValue){
       return NextResponse.json({ message: 'Lance menor ou igual que o valor mínimo' }, { status: 400 })
     }
+
     // Verifica se o lance é maior que o maior lance do leilão
     const maiorLance = leilao.lances.length > 0 ? leilao.lances?.reduce((prev, current) => {
       return (prev.value > current.value) ? prev : current
