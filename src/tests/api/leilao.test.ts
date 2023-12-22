@@ -1,4 +1,5 @@
-import itens from "../../app/api/itens/route";
+
+const itens = require('../../app/api/itens/route');
 
 test('Espera criar um leilão normalmente', () => {
   const req = {
@@ -19,6 +20,6 @@ test('Espera criar um leilão normalmente', () => {
 
   itens.POST(req, res);
 
-  console.log(json.mock)
+  console.log('a',json.mock)
 
 })
