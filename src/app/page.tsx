@@ -23,7 +23,9 @@ export default function Home() {
 
   useEffect(() => {
     getLeiloes();
-    setUser(JSON.parse(window.localStorage.getItem("user") || "{name: ''}}"));
+    if (localStorage.getItem("user")) {
+      setUser(JSON.parse(localStorage.getItem("user") as string));
+    }
   }, []);
 
   return (
@@ -81,9 +83,9 @@ function LeilaoModal({
   const [user, setUser] = useState({ name: "", cpf: "" });
 
   useEffect(() => {
-    setUser(
-      JSON.parse(window.localStorage.getItem("user") || "{name: '', cpf: ''}")
-    );
+    if (localStorage.getItem("user")) {
+      setUser(JSON.parse(localStorage.getItem("user") as string));
+    }
   }, []);
   const maiorLance = selectedLeilao?.lances.reduce(
     (prev, current) => {
@@ -182,7 +184,6 @@ function ItemList({
   leiloes: Leilao[];
   setLeilao: Function;
 }) {
-
   return (
     <div>
       <h2>Itens</h2>
@@ -335,7 +336,7 @@ function LoginModal({
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    window.localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("user", JSON.stringify(user));
     setModalOpen(false);
     setUser(defaultUser);
   }
