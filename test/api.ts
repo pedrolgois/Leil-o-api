@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { Item, getItens, postItem } from "../src/lib/data"
+import { Item, getItens, postItem, getItem, deleteItem } from "../src/lib/data"
 
 export async function GET() {
     const response = await getItens();
@@ -17,4 +17,9 @@ export async function POST() {
     }
     postItem(item);
     return "ok";
+}
+
+export async function GET_ID() {
+    const response = await getItem("15");
+    return response;
 }
